@@ -5,4 +5,7 @@ variable "avail_zone" {}
 variable "myip" {}
 variable "myports" {}
 variable "instance_type" {}
-variable "public_key_location" {}
+variable "public_key_location" {
+    type = string
+    sensitive = true
+}
