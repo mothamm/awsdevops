@@ -30,7 +30,7 @@ existing_vpcs = client.describe_vpcs(
     ]
 )
 
-def create_vpc():
+def delete_vpc():
     if existing_vpcs['Vpcs']:
         vpc_id = existing_vpcs['Vpcs'][0]['VpcId']
         print(f"CIDR exists: {ipcidr}. \nVPC ID is: {vpc_id}")
@@ -40,4 +40,4 @@ def create_vpc():
     else:
         print(f"CIDR does not exist: {ipcidr}. \nExiting...!")
 
-create_vpc()
+delete_vpc()
