@@ -57,4 +57,4 @@ def delete_non_empty_bucket(bucket_name):
     bucketClient = s3.Bucket(bucket_name)
     bucketClient.objects.all().delete()
     bucketClient.meta.client.delete_bucket(Bucket = bucket_name)
-delete_non_empty_bucket(bucket_name)
+# delete_non_empty_bucket(bucket_name)
