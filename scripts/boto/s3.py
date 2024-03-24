@@ -3,8 +3,8 @@ from botocore.exceptions import ClientError
 
 s3 = boto3.client('s3')
 
-bucket_name = "samplebucketmanu123manu1"
-region = "us-east-1" # If you're creating the resources is `US-EAST-1` then this variable is not required.
+bucket_name = "<YOUR-BUCKET-NAME HERE>"
+region = "us-east-2" # If you're creating the resources is `US-EAST-1` then this variable is not required.
 
 #Creating a bucket
 def create_bucket(bucket_name, region=None):
