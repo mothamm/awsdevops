@@ -1,3 +1,4 @@
+from urllib import response
 import boto3
 
 # class color:
@@ -34,9 +35,6 @@ def create_vpc():
     if existing_vpcs['Vpcs']:
         vpc_id = existing_vpcs['Vpcs'][0]['VpcId']
         print(f"CIDR exists already: {ipcidr}. \nVPC ID is: {vpc_id}")
-        # print(f"Proceeding to delete the VPC: {vpc_id} ...")
-        # response = client.delete_vpc (VpcId = vpc_id)
-        # print(f"Successfully Deleted {vpc_id} .... Exiting!!")
     else:
         print(f"CIDR does not exist: {ipcidr}. \nCreating a new VPC...")
         response = client.create_vpc (
@@ -64,7 +62,26 @@ def modify_vpc(vpc_id):
     except Exception as e:
         print(f"Failed to modify attributes for VPC {vpc_id} as {e}")
         return None
+    
+# def create_subnet():
+#     response = client.create_subnet(
+#         TagSpecifications = [{
+#             'ResourceType': 'subnet',
+#             'Tags': [{
+#                 'Key': 'Name',
+#                 'Value': 'Public-Subnet-1',
+#                 'Key': 'ENV',
+#                 'Value': 'Boto3'
+#             },]
+#         },],
+#         AvailabilityZone = 'us-east-1a',
+#         CidrBlock = '10.1.0.0/24',
+#         VpcId = vpc_id
+#     )
+#     subnet_id = response
+#     print(subnet_id)
 
 vpc_id = create_vpc()
-if vpc_id:
-    modify_vpc(vpc_id)
+# if vpc_id:
+#     modify_vpc(vpc_id)
+# create_subnet()
