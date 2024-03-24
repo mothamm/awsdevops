@@ -3,8 +3,8 @@ from botocore.exceptions import ClientError
 
 s3 = boto3.client('s3')
 
-bucket_name = "YOUR-BUCKET-NAME"
-region = "YOUR-REGION" # If you're creating the resources is `US-EAST-1` then this variable is not required.
+bucket_name = "samplebucketmanu123manu1"
+region = "us-east-1" # If you're creating the resources is `US-EAST-1` then this variable is not required.
 
 #Creating a bucket
 def create_bucket(bucket_name, region=None):
@@ -16,7 +16,7 @@ def create_bucket(bucket_name, region=None):
         logging.error(e)
         return False
     return True
-create_bucket(bucket_name)
+# create_bucket(bucket_name)
 
 #Uploading the file as an object - USE case if for multi-part uploads
 def upload_file_object(file_name, bucket_name, fobj_name=None):
@@ -30,7 +30,7 @@ def upload_file_object(file_name, bucket_name, fobj_name=None):
         logging.error(e)
         return False
     return True
-upload_file_object("./delete_vpc.py", bucket_name, "deletevpc.txt")
+# upload_file_object("./delete_vpc.py", bucket_name, "deletevpc.txt")
 
 #Uploading the files to S3 Bucket
 def Upload_file(file_name, bucket_name, obj_name):
@@ -43,13 +43,18 @@ def Upload_file(file_name, bucket_name, obj_name):
         logging.error(e)
         return False
     return True
-Upload_file("./delete_vpc.py", bucket_name, "deletevpc.py")
+# Upload_file("./delete_vpc.py", bucket_name, "deletevpc.py")
 
 #Deleting an Empty Bucket
 def delete_empty_bucket(bucket_name):
     response = s3.delete_bucket(Bucket=bucket_name)
     print (response)
+# delete_empty_bucket(bucket_name)
 
-delete_empty_bucket(bucket_name)
-
-#Deleting an Empty Bucket
+#Deleting a Non-Empty Bucket
+def delete_non_empty_bucket(bucket_name):
+    s3 = boto3.resource('s3')
+    bucketClient = s3.Bucket(bucket_name)
+    bucketClient.objects.all().delete()
+    bucketClient.meta.client.delete_bucket(Bucket = bucket_name)
+delete_non_empty_bucket(bucket_name)
