@@ -1,3 +1,4 @@
+from ast import Attribute
 import boto3
 
 # class color:
@@ -41,3 +42,18 @@ def delete_vpc():
         print(f"CIDR does not exist: {ipcidr}. \nExiting...!")
 
 delete_vpc()
+
+# def get_vpc():
+#     vpc_ids = client.describe_vpcs()['Vpcs']
+#     for vpcid in vpc_ids:
+#         print(vpcid['VpcId'] + " -- " + vpcid['CidrBlock'])
+   
+# # get_vpc()
+
+# def get_rvpc():
+#     vpc = client.describe_vpc_attribute(
+#         Attribute = 'enableDnsSupport',
+#         VpcId = 'vpc-0f6fa630dc0d1349d'  
+#     )
+#     print(vpc)
+# get_rvpc()
