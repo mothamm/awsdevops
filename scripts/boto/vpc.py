@@ -38,6 +38,7 @@ existing_vpcs = client.describe_vpcs(
     ]
 )
 
+#Create a VPC after checking if there is any existing VPC with CIDR
 def create_vpc():
     if existing_vpcs['Vpcs']:
         vpc_id = existing_vpcs['Vpcs'][0]['VpcId']
@@ -71,6 +72,7 @@ def create_vpc():
 #         print(f"Failed to modify attributes for VPC {vpc_id} as {e}")
 #         return None
     
+#Create Subnets based on the number CIDR blocks mentioned
 def create_subnet(CidrBlock, VpcId, AvailabilityZone):
     subnet = client.create_subnet(
         TagSpecifications = [{ 'ResourceType': 'subnet', 'Tags':[{ 'Key': 'Name', 'Value': 'Boto3'}], }],
@@ -79,7 +81,25 @@ def create_subnet(CidrBlock, VpcId, AvailabilityZone):
         VpcId = VpcId
     )
     print(subnet['Subnet']['SubnetId'])
+    return CidrBlock, VpcId, AvailabilityZone
 
+#Describing subnets and storing them into list for future access such as subnet association with route-tables.
+def describe_subnets(vpc_id):
+    filter = [{'Name':'vpc-id', 'Values':[vpc_id]}]
+    try:
+        response = client.describe_subnets(Filters=filter)
+        subnets = response['Subnets']
+        subnet_list = []
+        for subnet in subnets:
+            subnet_info = subnet['SubnetId']
+            subnet_list.append(subnet_info)
+        # print(subnet_list)
+        return subnet_list
+    except ClientError as e:
+        print(f"Error describing subnets: {e}")
+        return None
+
+#Check if the created VPC has any IGW attached and then create a new IGW and attach it to VPC
 def create_attach_igw(vpc_id):
     
     try:
@@ -103,8 +123,61 @@ def create_attach_igw(vpc_id):
         logging.error(e)
         return False  
 
+#Associating the IGW with Route Table
+def igw_assoc_rtb(vpc_id, igw_id):
+    
+    try:
+        filter = [{'Name':'vpc-id', 'Values':[vpc_id]}]
+        get_rtb = client.describe_route_tables(Filters = filter)
+
+        if get_rtb['RouteTables']:
+            rtb = get_rtb['RouteTables'][0]
+            for association in rtb['Associations']:
+                if association['Main']:
+                    rtb_id = rtb['RouteTableId']
+                    routes_rtb = client.create_route(
+                        RouteTableId = rtb_id,
+                        DestinationCidrBlock = '0.0.0.0/0',
+                        GatewayId = igw_id
+                    )
+                    print(f"Main route table attached to VPC {vpc_id}. RTB ID: {rtb_id}. With IGW ID: {igw_id}")
+                    return vpc_id, igw_id, rtb_id
+            rtb_id = rtb['Associations'][0]['RouteTableId']
+            print(f"Route table attached to VPC {vpc_id}. RTB ID: {rtb_id}")
+            return rtb_id
+        else:
+            print(f"No route tables found for VPC {vpc_id}")
+            return None
+    except ClientError as e:
+        logging.error(e)
+        return False  
+
+def sub_assoc_rtb(subnets):
+    try:
+        filter = [{'Name':'vpc-id', 'Values':[vpc_id]}]
+        get_rtb = client.describe_route_tables(Filters = filter)
+
+        if get_rtb['RouteTables']:
+            rtb = get_rtb['RouteTables'][0]
+            for association in rtb['Associations']:
+                if association['Main']:
+                    rtb_id = rtb['RouteTableId']
+
+        for subnet in subnetsList[:3]:
+            rtb_routes = client.associate_route_table(RouteTableId = rtb_id, SubnetId = subnet)
+            print(f" Subnet {subnet} associated with Route table {rtb_id}")
+        return subnet, rtb, rtb_id
+    except ClientError as e:
+        print(f"Error associating subnets with route table: {e}")
+
+
+#Functions execution
 vpc_id = create_vpc()
 if vpc_id:
-     # for az, cidr in enumerate(subcidr):
-     #     create_subnet(CidrBlock = cidr, VpcId=vpc_id, AvailabilityZone=availablity_zones[az])
+    for az, cidr in enumerate(subcidr):
+        create_subnet(cidr, vpc_id, availablity_zones[az])
     igw_id, vpc_id = create_attach_igw(vpc_id)
+    igw_assoc_rtb(vpc_id, igw_id)
+    subnetsList = describe_subnets(vpc_id)
+    if subnetsList:
+        sub_assoc_rtb(subnetsList)
