@@ -152,6 +152,7 @@ def igw_assoc_rtb(vpc_id, igw_id):
         logging.error(e)
         return False  
 
+#This function checks for the main route table created for VPC and associates first 3 of 6 subnets.
 def sub_assoc_rtb(subnets):
     try:
         filter = [{'Name':'vpc-id', 'Values':[vpc_id]}]
@@ -164,6 +165,7 @@ def sub_assoc_rtb(subnets):
                     rtb_id = rtb['RouteTableId']
 
         for subnet in subnetsList[:3]:
+            mapPubIp = client.modify_subnet_attribute(MapPublicIpOnLaunch={'Value': True}, SubnetId = subnet)
             rtb_routes = client.associate_route_table(RouteTableId = rtb_id, SubnetId = subnet)
             print(f" Subnet {subnet} associated with Route table {rtb_id}")
         return subnet, rtb, rtb_id
@@ -174,10 +176,10 @@ def sub_assoc_rtb(subnets):
 #Functions execution
 vpc_id = create_vpc()
 if vpc_id:
-    for az, cidr in enumerate(subcidr):
-        create_subnet(cidr, vpc_id, availablity_zones[az])
-    igw_id, vpc_id = create_attach_igw(vpc_id)
-    igw_assoc_rtb(vpc_id, igw_id)
+    # for az, cidr in enumerate(subcidr):
+    #     create_subnet(cidr, vpc_id, availablity_zones[az])
+    # igw_id, vpc_id = create_attach_igw(vpc_id)
+    # igw_assoc_rtb(vpc_id, igw_id)
     subnetsList = describe_subnets(vpc_id)
     if subnetsList:
         sub_assoc_rtb(subnetsList)
