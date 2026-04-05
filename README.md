@@ -1,2 +1,3 @@
 # awsdevops
-This is my Course preparation repo for learnings and implementations on DevSecOps+AWS
+This is where i build my Career learning Devops.
+
