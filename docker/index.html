@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Container Info Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px auto;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Info Dashboard</h1>
+
+    <div class="card">
+        <h3>User Public IP</h3>
+        <p id="user-ip">Loading...</p>
+    </div>
+
+<!--    <div class="card">
+        <h3>Container Hostname</h3>
+        <p id="hostname">Loading...</p>
+    </div>
+-->
+    <div class="card">
+        <h3>Number of Hits</h3>
+        <p id="hits">0</p>
+    </div>
+
+<script>
+    // Fetch public IP
+    fetch("https://api.ipify.org?format=json")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("user-ip").innerText = data.ip;
+        })
+        .catch(() => {
+            document.getElementById("user-ip").innerText = "Error fetching IP";
+        });
+
+    // Fetch container hostname (requires backend endpoint)
+ //   fetch("/info")
+   //     .then(response => response.json())
+     //   .then(data => {
+       //     document.getElementById("hostname").innerText = data.hostname || "N/A";
+       // })
+       // .catch(() => {
+        //    document.getElementById("hostname").innerText = "Unavailable";
+       // });
+
+    // Hit counter using localStorage
+    let hits = localStorage.getItem("hits") || 0;
+    hits++;
+    localStorage.setItem("hits", hits);
+    document.getElementById("hits").innerText = hits;
+</script>
+
+</body>
+</html>
