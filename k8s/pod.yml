@@ -7,6 +7,6 @@ metadata:
 spec:
   containers:
   - name: nginx-container
-    image: nginx:latest
+    image: mrmotam/my-static-site:v1
     ports:
     - containerPort: 80
