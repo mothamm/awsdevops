@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: affinity-pod
+  labels:
+    level: restricted
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: level
+              operator: In
+              values: ["restricted"]
+        topologyKey: kubernetes.io/hostname
+  containers:
+    - name: my-static-site
+      image: mrmotam/my-static-site:v1
+      ports:
+        - containerPort: 80

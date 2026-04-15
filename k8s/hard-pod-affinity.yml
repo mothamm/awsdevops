@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hard-pod-affinity
+  labels:
+    app: mrmotam
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mrmotam
+  template:
+    metadata:
+      labels:
+        app: mrmotam
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values: ["mrmotam"]
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: nginxpod
+        image: mrmotam/my-static-site:v1
+        ports:
+        - containerPort: 80
