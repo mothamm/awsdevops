@@ -11,4 +11,4 @@ spec:
         cpu: "200m"
       limits: 
         cpu: "1000m"
-    args: ["--cpus", "0.2"]
+    args: ["-cpus", "1"]
