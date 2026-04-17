@@ -99,46 +99,6 @@ resource "aws_security_group" "eks-sg" {
     }
 }
 
-resource "aws_security_group" "eks-node-group-sg" {
-    name = "eks-node-group-sg"
-    description = "Security group for EKS cluster worked nodes"
-    vpc_id = aws_vpc.eks-vpc.id
-    ingress {
-        description = "Allow HTTPS"
-        from_port = 443
-        to_port = 443
-        protocol = "tcp"
-        cidr_blocks = ["10.0.0.0/16"]
-    }
-    ingress {
-        description = "Allow HTTP"
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    ingress {
-        description = "Kubernetes Ports"
-        from_port = 30000
-        to_port = 32767
-        protocol = "custom-tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    ingress {
-        description = "Custom Ports"
-        from_port = 8000
-        to_port = 9000
-        protocol = "custom-tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    ingress {
-        description = "Jump SG"
-        from_port = 22
-        to_port = 22
-        protocol = "ssh"
-        cidr_blocks = ["sg-09eba347d9647b1e4"]
-    }
-}
 
 resource "aws_eks_cluster" "eks-cluster" {
     name = "my-prod-cluster"
@@ -172,5 +132,4 @@ resource "aws_eks_node_group" "eks-node-group" {
         min_size = 1
     }
     depends_on = [ aws_iam_role.eks_node_group_role ]
-    security_group_ids = [aws_security_group.eks-sg.id]
 }
