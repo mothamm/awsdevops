@@ -99,6 +99,8 @@ resource "aws_security_group" "eks-sg" {
     }
 }
 
+resource "aws_eks_cluster" "eks-cluster" {
+    name = "my-prod-cluster"
     role_arn = aws_iam_role.eks-cluster-role.arn
     vpc_config {
         subnet_ids = [
