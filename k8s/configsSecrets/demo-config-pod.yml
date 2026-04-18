@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: config-demo-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: config-demo
+    image: nginx:1.19
+    env: 
+    - name: NGINX_PORT
+      valueFrom:
+        configMapKeyRef:
+          name: test-config
+          key: app_Port
+    - name: ENV
+      valueFrom:
+        configMapKeyRef:
+          name: test-config
+          key: user_env
+    ports:
+    - containerPort: 80
